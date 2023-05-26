@@ -39,6 +39,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
+
+		httpSecurity.headers().frameOptions().sameOrigin();
 		httpSecurity.csrf().disable()
 				.authorizeRequests().antMatchers("/**").permitAll().
 						anyRequest().authenticated().and().

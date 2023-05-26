@@ -8,7 +8,7 @@ public class AnswerEntity implements Serializable {
     private static final long serialVersionUID = 5512315223586710044L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)

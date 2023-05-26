@@ -9,7 +9,7 @@ public class QuestionEntity implements Serializable {     //for persisting an ob
     private static final long serialVersionUID = -4664052149941848167L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)
