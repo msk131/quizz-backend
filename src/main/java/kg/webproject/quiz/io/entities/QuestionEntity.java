@@ -9,7 +9,8 @@ public class QuestionEntity implements Serializable {     //for persisting an ob
     private static final long serialVersionUID = -4664052149941848167L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.AUTO, generator="my_QUS_seq_gen")
+    @SequenceGenerator(name="my_QUS_seq_gen", sequenceName="MY_QUS_SEQ")
     private long id;
 
     @Column(nullable = false)
@@ -17,6 +18,18 @@ public class QuestionEntity implements Serializable {     //for persisting an ob
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private Set<AnswerEntity> answers;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="modules_id")
+    private ModulesEntity module;
+
+    public ModulesEntity getModule() {
+        return module;
+    }
+
+    public void setModule(ModulesEntity module) {
+        this.module = module;
+    }
 
     public long getId() {
         return id;

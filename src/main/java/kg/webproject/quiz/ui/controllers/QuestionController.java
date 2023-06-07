@@ -24,33 +24,10 @@ public class QuestionController {
     private ModelMapper modelMapper = new ModelMapper();
 
     @CrossOrigin
-    @PostMapping
-    @ApiOperation(value = "createQuestion")
-    public QuestionResponseModel createQuestion(@RequestBody QuestionRequestModel question){
-        QuestionDto questionDto = modelMapper.map(question, QuestionDto.class);
-
-        return modelMapper.map(questionService.createQuestion(questionDto), QuestionResponseModel.class);
-
-    }
-
-    @CrossOrigin
     @GetMapping(path = "/{id}")
     @ApiOperation(value = "getQuestionById")
     public QuestionResponseModel getQuestionById(@PathVariable long id){
         return modelMapper.map(questionService.getQuestionById(id), QuestionResponseModel.class);
-    }
-
-    @CrossOrigin
-    @GetMapping
-    @ApiOperation(value = "getAllQuestions")
-    public Set<QuestionResponseModel> getAllQuestions(){
-        Set<QuestionResponseModel> returnValue = new HashSet<>();
-        for(QuestionDto questionDto: questionService.getAllQuestions()){
-            QuestionResponseModel questionResponseModel= modelMapper.map(questionDto, QuestionResponseModel.class);
-            returnValue.add(questionResponseModel);
-        }
-
-        return returnValue;
     }
 
     @CrossOrigin

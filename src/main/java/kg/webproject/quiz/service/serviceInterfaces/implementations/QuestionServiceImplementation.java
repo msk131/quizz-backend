@@ -1,11 +1,15 @@
 package kg.webproject.quiz.service.serviceInterfaces.implementations;
 
+import kg.webproject.quiz.io.entities.ModulesEntity;
 import kg.webproject.quiz.io.entities.QuestionEntity;
+import kg.webproject.quiz.io.repositories.ModulesRepository;
 import kg.webproject.quiz.io.repositories.QuestionRepository;
 import kg.webproject.quiz.service.serviceInterfaces.QuestionService;
 import kg.webproject.quiz.shared.dto.AnswerDto;
+import kg.webproject.quiz.shared.dto.ModulesDto;
 import kg.webproject.quiz.shared.dto.QuestionDto;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +18,9 @@ import java.util.Set;
 public class QuestionServiceImplementation implements QuestionService {
 
     private QuestionRepository _questionRepository;
+
+    @Autowired
+    private ModulesRepository _modulesRepository;
 
     private ModelMapper modelMapper = new ModelMapper();
 
@@ -51,6 +58,62 @@ public class QuestionServiceImplementation implements QuestionService {
         return "Operation successful";
     }
 
+    @Override
+    public ModulesDto createModules(ModulesDto modulesDto) {
+
+         if(_modulesRepository.findByName(modulesDto.getName()) != null)
+            throw new RuntimeException("Module already exists in Database");
+
+         for (QuestionDto questionDto:modulesDto.getQuestions() ) {
+
+             questionDto.setModule(modulesDto);
+             for (AnswerDto answer : questionDto.getAnswers()) {
+                 answer.setQuestion(questionDto);
+             }
+         }
+
+        ModulesEntity modulesEntity = modelMapper.map(modulesDto, ModulesEntity.class);
+        ModulesDto returnValue = modelMapper.map(_modulesRepository.save(modulesEntity), ModulesDto.class);
+        return returnValue;
+    }
+
+    @Override
+    public ModulesDto getModuleById(long id) {
+
+        return modelMapper.map(_modulesRepository.findById(id), ModulesDto.class);
+    }
+
+    @Override
+    public Set<ModulesDto> getAllModules() {
+
+        Set<ModulesDto> returnSet = new HashSet<>();
+        for(ModulesEntity modulesEntity:_modulesRepository.findAll()){
+            modulesEntity.setQuestions(null);
+            ModulesDto modulesDto = modelMapper.map(modulesEntity, ModulesDto.class);
+            returnSet.add(modulesDto);
+        }
+        return returnSet;
+    }
+
+    @Override
+    public String deleteModuleById(long id) {
+
+        _modulesRepository.deleteById(id);
+
+        return "Operation successful";
+    }
+
+    @Override
+    public ModulesDto updateModule(QuestionDto questionToAdd, long id) {
+
+        ModulesEntity modulesEntity = _modulesRepository.findById(id);
+        ModulesDto modulesDto = modelMapper.map(modulesEntity, ModulesDto.class);
+        modulesDto.getQuestions().add(questionToAdd);
+        ModulesEntity modulesEntityToReturn = _modulesRepository.save(modelMapper.map(modulesDto, ModulesEntity.class));
+
+        return modelMapper.map(modulesEntityToReturn, ModulesDto.class);
+    }
+
 //    @Override
 //    public QuestionDto updateQuestion(long Id, QuestionDto question) {
 ////        QuestionDto questionUpdate = modelMapper.map(question, QuestionDto.class);
@@ -70,9 +133,10 @@ public class QuestionServiceImplementation implements QuestionService {
 //    }
 
     @Override
-    public Set<QuestionDto> getAllQuestions() {
+    public Set<QuestionDto> getAllQuestions(long id) {
         Set<QuestionDto> returnSet = new HashSet<>();
-        for(QuestionEntity question: _questionRepository.findAll()){
+
+        for(QuestionEntity question: _questionRepository.findAllByModule(_modulesRepository.findById(id))){
             QuestionDto questionDto = modelMapper.map(question, QuestionDto.class);
             returnSet.add(questionDto);
         }

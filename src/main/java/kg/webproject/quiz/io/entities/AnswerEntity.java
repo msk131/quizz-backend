@@ -8,7 +8,8 @@ public class AnswerEntity implements Serializable {
     private static final long serialVersionUID = 5512315223586710044L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.AUTO, generator="my_ans_seq_gen")
+    @SequenceGenerator(name="my_ans_seq_gen", sequenceName="MY_ANSWER_SEQ")
     private long id;
 
     @Column(nullable = false)

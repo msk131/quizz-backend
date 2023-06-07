@@ -1,10 +1,12 @@
 package kg.webproject.quiz;
 
 import kg.webproject.quiz.io.entities.AnswerEntity;
+import kg.webproject.quiz.io.entities.ModulesEntity;
 import kg.webproject.quiz.io.entities.QuestionEntity;
 import kg.webproject.quiz.io.repositories.QuestionRepository;
 import kg.webproject.quiz.service.serviceInterfaces.QuestionService;
 import kg.webproject.quiz.shared.dto.AnswerDto;
+import kg.webproject.quiz.shared.dto.ModulesDto;
 import kg.webproject.quiz.shared.dto.QuestionDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -26,8 +28,6 @@ public class QuizApplication {
     public static void main(String[] args) {
 
         SpringApplication.run(QuizApplication.class, args);
-
-
     }
 
     @Bean
@@ -38,6 +38,11 @@ public class QuizApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void insertDummyAfterStartup() {
 
+
+        ModulesDto modulesDto=new ModulesDto();
+        modulesDto.setName("Core Java");
+
+        Set quesions = new HashSet<QuestionDto>();
 
         QuestionDto questionEntity = new QuestionDto();
         questionEntity.setQuestionContent("Is Java platform independent platform");
@@ -53,7 +58,10 @@ public class QuizApplication {
         answers.add(answerEntity2);
         questionEntity.setAnswers(answers);
 
-        questionService.createQuestion(questionEntity);
+        quesions.add(questionEntity);
+        modulesDto.setQuestions(quesions);
+
+        questionService.createModules(modulesDto);
     }
 
 }
