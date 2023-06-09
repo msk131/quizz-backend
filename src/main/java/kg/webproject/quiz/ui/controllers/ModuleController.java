@@ -29,10 +29,10 @@ public class ModuleController {
     @CrossOrigin
     @PostMapping
     @ApiOperation(value = "createModule")
-    public QuestionResponseModel createModule(@RequestBody QuestionRequestModel question) {
-        QuestionDto questionDto = modelMapper.map(question, QuestionDto.class);
+    public ModuleResponseModel createModule(@RequestBody ModuleRequestModel module) {
+        ModulesDto modulesDto = modelMapper.map(module, ModulesDto.class);
 
-        return modelMapper.map(questionService.createQuestion(questionDto), QuestionResponseModel.class);
+        return modelMapper.map(questionService.createModules(modulesDto), ModuleResponseModel.class);
 
     }
 

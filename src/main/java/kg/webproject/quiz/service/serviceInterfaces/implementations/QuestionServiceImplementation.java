@@ -61,19 +61,27 @@ public class QuestionServiceImplementation implements QuestionService {
     @Override
     public ModulesDto createModules(ModulesDto modulesDto) {
 
+        ModulesDto returnValue= null;
+        if(modulesDto.getName() != null)
          if(_modulesRepository.findByName(modulesDto.getName()) != null)
             throw new RuntimeException("Module already exists in Database");
+         if(modulesDto.getId() != 0 && modulesDto.getQuestions()!=null){
 
-         for (QuestionDto questionDto:modulesDto.getQuestions() ) {
-
-             questionDto.setModule(modulesDto);
-             for (AnswerDto answer : questionDto.getAnswers()) {
-                 answer.setQuestion(questionDto);
-             }
+             modulesDto.setName(_modulesRepository.findById(modulesDto.getId()).getName());
          }
 
+        if(modulesDto.getQuestions()!=null){
+            for (QuestionDto questionDto:modulesDto.getQuestions() ) {
+
+                questionDto.setModule(modulesDto);
+                for (AnswerDto answer : questionDto.getAnswers()) {
+                    answer.setQuestion(questionDto);
+                }
+            }
+        }
+
         ModulesEntity modulesEntity = modelMapper.map(modulesDto, ModulesEntity.class);
-        ModulesDto returnValue = modelMapper.map(_modulesRepository.save(modulesEntity), ModulesDto.class);
+        returnValue = modelMapper.map(_modulesRepository.save(modulesEntity), ModulesDto.class);
         return returnValue;
     }
 

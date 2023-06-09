@@ -62,6 +62,12 @@ public class QuizApplication {
         modulesDto.setQuestions(quesions);
 
         questionService.createModules(modulesDto);
+
+        ModulesDto modulesDto1=new ModulesDto();
+        modulesDto1.setName("Python");
+
+        questionService.createModules(modulesDto1);
+
     }
 
 }
